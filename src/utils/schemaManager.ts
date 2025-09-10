@@ -11,7 +11,18 @@ export class SchemaManager {
   private schemasDir: string;
 
   constructor(schemasDirectory?: string) {
-    this.schemasDir = schemasDirectory || path.join(__dirname, '../schemas');
+    if (schemasDirectory) {
+      this.schemasDir = schemasDirectory;
+    } else {
+      // In production (compiled), __dirname will be dist/utils
+      // In development (ts-node), __dirname will be src/utils
+      const isCompiled = __dirname.includes('dist');
+      this.schemasDir = isCompiled 
+        ? path.join(__dirname, '../schemas')  // dist/schemas
+        : path.join(__dirname, '../schemas'); // src/schemas
+    }
+    
+    console.log('SchemaManager: Looking for schemas in:', this.schemasDir);
   }
 
   /**
@@ -33,10 +44,13 @@ export class SchemaManager {
    */
   getAvailableSchemas(): string[] {
     try {
-      return fs.readdirSync(this.schemasDir)
+      console.log('SchemaManager: Checking directory exists:', fs.existsSync(this.schemasDir));
+      const files = fs.readdirSync(this.schemasDir)
         .filter(file => file.endsWith('.yml') || file.endsWith('.yaml'));
+      console.log('SchemaManager: Found schema files:', files);
+      return files;
     } catch (error) {
-      console.error('Error reading schemas directory:', error);
+      console.error('SchemaManager: Error reading schemas directory:', this.schemasDir, error);
       return [];
     }
   }
@@ -50,13 +64,16 @@ export class SchemaManager {
     tags: any[];
   } {
     const schemaFiles = this.getAvailableSchemas();
+    console.log('SchemaManager: Loading schemas from files:', schemaFiles);
     
     let mergedComponents: any = { schemas: {}, securitySchemes: {}, responses: {} };
     let mergedPaths: any = {};
     let mergedTags: any[] = [];
 
     schemaFiles.forEach(filename => {
+      console.log('SchemaManager: Processing file:', filename);
       const schema = this.loadSchemaFile(filename);
+      console.log('SchemaManager: Loaded schema keys:', Object.keys(schema || {}));
       
       // Merge components
       if (schema.components) {
@@ -81,6 +98,10 @@ export class SchemaManager {
         mergedTags = [...mergedTags, ...schema.tags];
       }
     });
+
+    console.log('SchemaManager: Final merged components schemas:', Object.keys(mergedComponents?.schemas || {}));
+    console.log('SchemaManager: Final merged paths:', Object.keys(mergedPaths || {}));
+    console.log('SchemaManager: Final merged tags count:', mergedTags?.length || 0);
 
     return {
       components: mergedComponents,
