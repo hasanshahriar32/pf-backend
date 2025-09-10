@@ -79,8 +79,8 @@ app.use(errorHandler);
 // Connect to database
 Database.connect().catch(console.error);
 
-// Export for Vercel
-export default app;
+// Export for Vercel (CommonJS)
+module.exports = app;
 
 // For local development
 if (process.env.NODE_ENV !== 'production') {
