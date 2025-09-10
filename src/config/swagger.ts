@@ -35,5 +35,12 @@ const specs = {
 
 console.log('Swagger: Generated OpenAPI spec with', Object.keys(specs.components?.schemas || {}).length, 'schemas');
 console.log('Swagger: Available schemas:', Object.keys(specs.components?.schemas || {}));
+console.log('Swagger: Paths loaded:', Object.keys(specs.paths || {}));
+console.log('Swagger: Total paths count:', Object.keys(specs.paths || {}).length);
+
+// Add debug route for production
+if (process.env.NODE_ENV === 'production') {
+  console.log('Swagger: PRODUCTION - Full paths object:', JSON.stringify(specs.paths, null, 2));
+}
 
 export default specs;

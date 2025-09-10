@@ -54,6 +54,23 @@ app.get('/health', (req: any, res: any) => {
   });
 });
 
+// Debug endpoint for checking OpenAPI spec structure
+app.get('/debug/openapi', (req: any, res: any) => {
+  res.json({
+    hasComponents: !!specs.components,
+    hasPaths: !!specs.paths,
+    componentsKeys: Object.keys(specs.components || {}),
+    pathsKeys: Object.keys(specs.paths || {}),
+    pathsCount: Object.keys(specs.paths || {}).length,
+    schemasCount: Object.keys(specs.components?.schemas || {}).length,
+    availableSchemas: Object.keys(specs.components?.schemas || {}),
+    samplePath: specs.paths ? Object.keys(specs.paths)[0] : 'none',
+    environment: process.env.NODE_ENV,
+    __dirname,
+    cwd: process.cwd()
+  });
+});
+
 app.get('/', (req: any, res: any) => {
   res.status(200).json({
     success: true,
