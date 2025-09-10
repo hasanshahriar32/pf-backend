@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import swaggerUi from 'swagger-ui-express';
 import { errorHandler } from '../src/middleware/errorHandler';
 import { notFoundHandler } from '../src/middleware/notFoundHandler';
-import routes from '../src/routes';
+import routes from '../src/routes/index';
 import Database from '../src/config/database';
 import specs from '../src/config/swagger';
 
