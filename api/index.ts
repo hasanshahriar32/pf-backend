@@ -3,17 +3,16 @@ import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 import swaggerUi from 'swagger-ui-express';
-import { errorHandler } from '@/middleware/errorHandler';
-import { notFoundHandler } from '@/middleware/notFoundHandler';
-import routes from '@/routes';
-import Database from '@/config/database';
-import specs from '@/config/swagger';
+import { errorHandler } from '../src/middleware/errorHandler';
+import { notFoundHandler } from '../src/middleware/notFoundHandler';
+import routes from '../src/routes';
+import Database from '../src/config/database';
+import specs from '../src/config/swagger';
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Security middleware
 app.use(helmet());
@@ -22,6 +21,9 @@ app.use(cors());
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Connect to database
+Database.connect().catch(console.error);
 
 // Swagger UI Documentation
 const swaggerOptions = {
@@ -76,32 +78,4 @@ app.use('/api/v1', routes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-const startServer = async () => {
-  try {
-    // Connect to database
-    await Database.connect();
-    
-    app.listen(PORT, () => {
-      console.log(`🚀 Server is running on port ${PORT}`);
-      console.log(`📊 Health check available at http://localhost:${PORT}/health`);
-    });
-  } catch (error) {
-    console.error('Failed to start server:', error);
-    process.exit(1);
-  }
-};
-
-// Handle graceful shutdown
-process.on('SIGINT', async () => {
-  console.log('Shutting down gracefully...');
-  await Database.disconnect();
-  process.exit(0);
-});
-
-process.on('SIGTERM', async () => {
-  console.log('Shutting down gracefully...');
-  await Database.disconnect();
-  process.exit(0);
-});
-
-startServer();
+export default app;
