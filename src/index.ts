@@ -76,32 +76,38 @@ app.use('/api/v1', routes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-const startServer = async () => {
-  try {
-    // Connect to database
-    await Database.connect();
-    
-    app.listen(PORT, () => {
-      console.log(`🚀 Server is running on port ${PORT}`);
-      console.log(`📊 Health check available at http://localhost:${PORT}/health`);
-    });
-  } catch (error) {
-    console.error('Failed to start server:', error);
-    process.exit(1);
-  }
-};
+// Connect to database on app initialization
+Database.connect().catch(console.error);
 
-// Handle graceful shutdown
-process.on('SIGINT', async () => {
-  console.log('Shutting down gracefully...');
-  await Database.disconnect();
-  process.exit(0);
-});
+// For Vercel serverless deployment
+export default app;
 
-process.on('SIGTERM', async () => {
-  console.log('Shutting down gracefully...');
-  await Database.disconnect();
-  process.exit(0);
-});
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  const startServer = async () => {
+    try {
+      app.listen(PORT, () => {
+        console.log(`🚀 Server is running on port ${PORT}`);
+        console.log(`📊 Health check available at http://localhost:${PORT}/health`);
+      });
+    } catch (error) {
+      console.error('Failed to start server:', error);
+      process.exit(1);
+    }
+  };
 
-startServer();
+  // Handle graceful shutdown
+  process.on('SIGINT', async () => {
+    console.log('Shutting down gracefully...');
+    await Database.disconnect();
+    process.exit(0);
+  });
+
+  process.on('SIGTERM', async () => {
+    console.log('Shutting down gracefully...');
+    await Database.disconnect();
+    process.exit(0);
+  });
+
+  startServer();
+}
