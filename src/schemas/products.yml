@@ -1,0 +1,167 @@
+# Products API Documentation
+# This file contains all product-related schemas and paths
+# This is an example file showing how to structure other resources
+
+components:
+  schemas:
+    Product:
+      type: object
+      required:
+        - id
+        - name
+        - price
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the product
+          example: "64f8a1b2c3d4e5f6g7h8i9j1"
+        name:
+          type: string
+          description: Product name
+          example: "Laptop Computer"
+        description:
+          type: string
+          description: Product description
+          example: "High-performance laptop for professionals"
+        price:
+          type: number
+          format: float
+          description: Product price
+          example: 999.99
+        category:
+          type: string
+          description: Product category
+          example: "Electronics"
+        inStock:
+          type: boolean
+          description: Product availability status
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          description: Product creation timestamp
+          example: "2023-01-01T00:00:00.000Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: "2023-01-01T00:00:00.000Z"
+
+    ProductCreate:
+      type: object
+      required:
+        - name
+        - price
+      properties:
+        name:
+          type: string
+          description: Product name
+          example: "New Laptop"
+        description:
+          type: string
+          description: Product description
+          example: "Latest model laptop"
+        price:
+          type: number
+          format: float
+          description: Product price
+          example: 1299.99
+        category:
+          type: string
+          description: Product category
+          example: "Electronics"
+        inStock:
+          type: boolean
+          description: Product availability status
+          example: true
+
+    ProductUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Product name
+          example: "Updated Laptop"
+        description:
+          type: string
+          description: Product description
+          example: "Updated description"
+        price:
+          type: number
+          format: float
+          description: Product price
+          example: 1199.99
+        category:
+          type: string
+          description: Product category
+          example: "Electronics"
+        inStock:
+          type: boolean
+          description: Product availability status
+          example: false
+
+# Example paths structure (uncomment when implementing products)
+# paths:
+#   /api/v1/products:
+#     get:
+#       tags:
+#         - Products
+#       summary: Get all products
+#       description: Retrieve a paginated list of all products
+#       parameters:
+#         - name: page
+#           in: query
+#           description: Page number
+#           required: false
+#           schema:
+#             type: integer
+#             minimum: 1
+#             default: 1
+#         - name: limit
+#           in: query
+#           description: Number of products per page
+#           required: false
+#           schema:
+#             type: integer
+#             minimum: 1
+#             maximum: 100
+#             default: 10
+#       responses:
+#         '200':
+#           description: Products retrieved successfully
+#           content:
+#             application/json:
+#               schema:
+#                 $ref: '#/components/schemas/PaginatedResponse'
+#     
+#     post:
+#       tags:
+#         - Products
+#       summary: Create a new product
+#       description: Add a new product to the catalog
+#       security:
+#         - bearerAuth: []
+#       requestBody:
+#         required: true
+#         content:
+#           application/json:
+#             schema:
+#               $ref: '#/components/schemas/ProductCreate'
+#       responses:
+#         '201':
+#           description: Product created successfully
+#           content:
+#             application/json:
+#               schema:
+#                 allOf:
+#                   - $ref: '#/components/schemas/ApiResponse'
+#                   - type: object
+#                     properties:
+#                       data:
+#                         $ref: '#/components/schemas/Product'
+
+tags:
+  - name: Products
+    description: Product management operations

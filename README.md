@@ -86,6 +86,24 @@ npm run dev
 
 The server will start on `http://localhost:3000`
 
+## 📚 API Documentation
+
+This project includes comprehensive, interactive API documentation powered by **Scalar**.
+
+### Access Documentation
+- **Interactive API Docs**: `http://localhost:3000/api-docs`
+- **OpenAPI Spec**: `http://localhost:3000/openapi.json`
+- **Health Check**: `http://localhost:3000/health`
+
+### Features
+- 🎨 Beautiful, modern UI with purple theme
+- 🔐 Built-in JWT authentication testing
+- 📊 Interactive request/response examples
+- 📋 Complete endpoint coverage
+- 🚀 Test API calls directly from the documentation
+
+For detailed documentation information, see [API_DOCS.md](./API_DOCS.md).
+
 ## API Endpoints
 
 ### Authentication

@@ -1,0 +1,115 @@
+# Health API Documentation
+# This file contains health check related schemas and paths
+
+paths:
+  /:
+    get:
+      tags:
+        - General
+      summary: API Root
+      description: Get API information and available endpoints
+      responses:
+        '200':
+          description: API information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'Express TypeScript Backend API'
+                  version:
+                    type: string
+                    example: '1.0.0'
+                  description:
+                    type: string
+                    example: 'A modular Express.js backend with TypeScript, Prisma, MongoDB, and JWT authentication'
+                  endpoints:
+                    type: object
+                    properties:
+                      health:
+                        type: string
+                        example: 'http://localhost:3000/health'
+                      api:
+                        type: string
+                        example: 'http://localhost:3000/api/v1'
+                      docs:
+                        type: string
+                        example: 'http://localhost:3000/api-docs'
+                      openapi:
+                        type: string
+                        example: 'http://localhost:3000/openapi.json'
+                  documentation:
+                    type: string
+                    example: 'http://localhost:3000/api-docs'
+
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health Check
+      description: Check if the API server is running and healthy
+      responses:
+        '200':
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: 'OK'
+                  message:
+                    type: string
+                    example: 'Server is running'
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: '2023-01-01T00:00:00.000Z'
+                  docs:
+                    type: string
+                    example: 'http://localhost:3000/api-docs'
+
+  /api/v1:
+    get:
+      tags:
+        - Health
+      summary: API Information
+      description: Get API information and available endpoints
+      responses:
+        '200':
+          description: API information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'API is running'
+                  version:
+                    type: string
+                    example: '1.0.0'
+                  endpoints:
+                    type: object
+                    properties:
+                      users:
+                        type: string
+                        example: '/api/v1/users'
+                      health:
+                        type: string
+                        example: '/health'
+
+tags:
+  - name: General
+    description: General API information and root endpoints
+  - name: Health
+    description: API health and status checks
