@@ -1,10 +1,10 @@
 node_modules
 .env.local
 .env.development
-src
 .git
 .gitignore
 README.md
 .vscode
 .DS_Store
 Thumbs.db
+dist
