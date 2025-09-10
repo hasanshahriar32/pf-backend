@@ -13,7 +13,7 @@ import specs from '@/config/swagger';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = parseInt(process.env.PORT || '3000', 10);
 
 // Security middleware
 app.use(helmet());
@@ -82,32 +82,34 @@ Database.connect().catch(console.error);
 // Export for Vercel (CommonJS)
 module.exports = app;
 
-// For local development
-if (process.env.NODE_ENV !== 'production') {
-  const startServer = async () => {
-    try {
-      app.listen(PORT, () => {
-        console.log(`🚀 Server is running on port ${PORT}`);
-        console.log(`📊 Health check available at http://localhost:${PORT}/health`);
-      });
-    } catch (error) {
-      console.error('Failed to start server:', error);
-      process.exit(1);
-    }
-  };
+// Start server (for Render, Railway, etc.)
+const startServer = async () => {
+  try {
+    const HOST = process.env.HOST || '0.0.0.0';
+    app.listen(PORT, HOST, () => {
+      console.log(`🚀 Server is running on ${HOST}:${PORT}`);
+      console.log(`📊 Health check available at http://${HOST}:${PORT}/health`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
 
-  // Handle graceful shutdown
-  process.on('SIGINT', async () => {
-    console.log('Shutting down gracefully...');
-    await Database.disconnect();
-    process.exit(0);
-  });
+// Handle graceful shutdown
+process.on('SIGINT', async () => {
+  console.log('Shutting down gracefully...');
+  await Database.disconnect();
+  process.exit(0);
+});
 
-  process.on('SIGTERM', async () => {
-    console.log('Shutting down gracefully...');
-    await Database.disconnect();
-    process.exit(0);
-  });
+process.on('SIGTERM', async () => {
+  console.log('Shutting down gracefully...');
+  await Database.disconnect();
+  process.exit(0);
+});
 
+// Start server unless it's being imported as a module (for Vercel)
+if (require.main === module) {
   startServer();
 }
