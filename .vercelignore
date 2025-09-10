@@ -1,7 +1,6 @@
 node_modules
 .env.local
 .env.development
-src
 .git
 .gitignore
 README.md
