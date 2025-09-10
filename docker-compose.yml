@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: mongodb://mongodb:27017/express-backend
+      JWT_SECRET: your-super-secret-jwt-key-change-this-in-production
+      JWT_EXPIRES_IN: 7d
+    depends_on:
+      - mongodb
+    networks:
+      - app-network
+
+  mongodb:
+    image: mongo:6.0
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: express-backend
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - app-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  app-network:
+    driver: bridge
