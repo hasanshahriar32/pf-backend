@@ -99,15 +99,47 @@ export class SchemaManager {
       }
     });
 
-    console.log('SchemaManager: Final merged components schemas:', Object.keys(mergedComponents?.schemas || {}));
-    console.log('SchemaManager: Final merged paths:', Object.keys(mergedPaths || {}));
-    console.log('SchemaManager: Final merged tags count:', mergedTags?.length || 0);
-
     return {
       components: mergedComponents,
       paths: mergedPaths,
       tags: mergedTags
     };
+  }
+
+  /**
+   * Resolve cross-references between schema files
+   */
+  private resolveReferences(obj: any, components: any): any {
+    if (typeof obj !== 'object' || obj === null) {
+      return obj;
+    }
+
+    if (Array.isArray(obj)) {
+      return obj.map(item => this.resolveReferences(item, components));
+    }
+
+    const result: any = {};
+    for (const key in obj) {
+      if (key === '$ref' && typeof obj[key] === 'string') {
+        // Handle internal references like #/components/schemas/UserLogin
+        const ref = obj[key];
+        if (ref.startsWith('#/components/schemas/')) {
+          const schemaName = ref.replace('#/components/schemas/', '');
+          // Check if the schema exists in our merged components
+          if (components.schemas && components.schemas[schemaName]) {
+            result[key] = ref; // Keep the reference as is since it should resolve correctly now
+          } else {
+            console.warn(`SchemaManager: Reference ${ref} not found in merged components`);
+            result[key] = ref; // Keep it anyway, might be resolved later
+          }
+        } else {
+          result[key] = ref;
+        }
+      } else {
+        result[key] = this.resolveReferences(obj[key], components);
+      }
+    }
+    return result;
   }
 
   /**
