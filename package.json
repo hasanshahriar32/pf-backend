@@ -11,7 +11,7 @@
     "postbuild": "prisma generate",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio --port 10000"
   },
   "keywords": [
     "express",
