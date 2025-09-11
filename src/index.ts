@@ -104,8 +104,8 @@ const startServer = async () => {
   try {
     const HOST = process.env.HOST || '0.0.0.0';
     app.listen(PORT, HOST, () => {
-      console.log(`🚀 Server is running on ${HOST}:${PORT}`);
-      console.log(`📊 Health check available at http://${HOST}:${PORT}/health`);
+      console.log(`🚀 Server is running on http://localhost:${PORT}`);
+      console.log(`📊 Health check available at http://localhost:${PORT}/health`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);
