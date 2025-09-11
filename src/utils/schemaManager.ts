@@ -90,7 +90,7 @@ export class SchemaManager {
 
       // Merge paths
       if (schema.paths) {
-        console.log('SchemaManager: Merging paths from', filename, ':', Object.keys(schema.paths));
+        // console.log('SchemaManager: Merging paths from', filename, ':', Object.keys(schema.paths));
         mergedPaths = { ...mergedPaths, ...schema.paths };
       }
 

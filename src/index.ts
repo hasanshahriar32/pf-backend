@@ -7,7 +7,7 @@ import { errorHandler } from '@/middleware/errorHandler';
 import { notFoundHandler } from '@/middleware/notFoundHandler';
 import routes from '@/routes';
 import Database from '@/config/database';
-import specs, { createSpecs } from '@/config/swagger';
+import specs from '@/config/swagger';
 
 // Load environment variables
 dotenv.config();
@@ -35,11 +35,10 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, swaggerOptions));
 // Raw OpenAPI spec endpoint
 app.get('/openapi.json', (req: any, res: any) => {
   try {
-    const dynamicSpecs = createSpecs(req);
-    console.log('📋 Serving OpenAPI spec with', Object.keys(dynamicSpecs).length, 'root keys');
+    console.log('📋 Serving OpenAPI spec with', Object.keys(specs).length, 'root keys');
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.json(dynamicSpecs);
+    res.json(specs);
   } catch (error) {
     console.error('Error serving OpenAPI spec:', error);
     res.status(500).json({ error: 'Failed to generate OpenAPI spec' });
