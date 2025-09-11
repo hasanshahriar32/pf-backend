@@ -4,8 +4,8 @@ import SchemaManager from '@/utils/schemaManager';
 const schemaManager = new SchemaManager();
 const { components: mergedComponents, paths: mergedPaths, tags: mergedTags } = schemaManager.loadAllSchemas();
 
-// Create OpenAPI specification directly
-const specs = {
+// Function to create specs with dynamic server URL
+const createSpecs = (req?: any) => ({
   openapi: '3.0.0',
   info: {
     title: 'Express TypeScript Backend API',
@@ -22,25 +22,22 @@ const specs = {
   },
   servers: [
     {
-      url: process.env.NODE_ENV === 'production' 
-        ? (process.env.PRODUCTION_URL || 'https://your-app.onrender.com')
-        : `http://localhost:${process.env.PORT || 3000}`,
-      description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Development server',
+      url: req ? `${req.protocol}://${req.get('host')}` : 'http://localhost:3000',
+      description: 'Current server',
     },
   ],
   components: mergedComponents,
   paths: mergedPaths,
   tags: mergedTags,
-};
+});
 
-console.log('Swagger: Generated OpenAPI spec with', Object.keys(specs.components?.schemas || {}).length, 'schemas');
-console.log('Swagger: Available schemas:', Object.keys(specs.components?.schemas || {}));
-console.log('Swagger: Paths loaded:', Object.keys(specs.paths || {}));
-console.log('Swagger: Total paths count:', Object.keys(specs.paths || {}).length);
+// Default specs for backward compatibility
+const specs = createSpecs();
 
 // Add debug route for production
 if (process.env.NODE_ENV === 'production') {
   console.log('Swagger: PRODUCTION - Full paths object:', JSON.stringify(specs.paths, null, 2));
 }
 
+export { createSpecs };
 export default specs;
