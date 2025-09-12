@@ -35,6 +35,7 @@ export class UserController {
         id: newUser.id,
         email: newUser.email,
         username: newUser.username,
+        role: newUser.role,
       });
 
       const loginResponse: LoginResponse = {
@@ -44,6 +45,7 @@ export class UserController {
           username: newUser.username,
           firstName: newUser.firstName || undefined,
           lastName: newUser.lastName || undefined,
+          role: newUser.role,
         },
         token,
       };
@@ -65,6 +67,7 @@ export class UserController {
         id: user.id,
         email: user.email,
         username: user.username,
+        role: user.role,
       });
 
       const loginResponse: LoginResponse = {
@@ -74,6 +77,7 @@ export class UserController {
           username: user.username,
           firstName: user.firstName || undefined,
           lastName: user.lastName || undefined,
+          role: user.role,
         },
         token,
       };

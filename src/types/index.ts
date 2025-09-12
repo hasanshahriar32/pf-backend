@@ -5,6 +5,7 @@ export interface AuthenticatedRequest extends Request {
     id: string;
     email: string;
     username: string;
+    role?: string;
   };
 }
 
@@ -31,6 +32,7 @@ export interface LoginResponse {
     username: string;
     firstName?: string;
     lastName?: string;
+    role: string;
   };
   token: string;
 }

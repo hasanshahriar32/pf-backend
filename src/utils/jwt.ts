@@ -4,9 +4,10 @@ interface JwtPayload extends BaseJwtPayload {
   id: string;
   email: string;
   username: string;
+  role: string;
 }
 
-export const generateToken = (payload: { id: string; email: string; username: string }): string => {
+export const generateToken = (payload: { id: string; email: string; username: string; role: string }): string => {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
     throw new Error('JWT_SECRET is not defined in environment variables');
@@ -27,7 +28,7 @@ export const verifyToken = (token: string): JwtPayload => {
     const decoded = jwt.verify(token, secret) as JwtPayload;
     
     // Ensure the decoded token has the required properties
-    if (!decoded.id || !decoded.email || !decoded.username) {
+    if (!decoded.id || !decoded.email || !decoded.username || !decoded.role) {
       throw new Error('Invalid token payload');
     }
     
