@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { UserController } from '@/controllers/userController';
-import { authenticateToken } from '@/middleware/auth';
+import { authenticateToken, requireAdmin } from '@/middleware/auth';
 import { validate } from '@/middleware/validation';
 import {
   createUserSchema,
@@ -9,6 +9,7 @@ import {
   changePasswordSchema,
   paginationSchema,
   userIdSchema,
+  assignAdminSchema,
 } from '@/validations/userValidation';
 
 const router = Router();
@@ -492,6 +493,77 @@ router.delete(
   authenticateToken,
   validate(userIdSchema, 'params'),
   userController.deleteUserById
+);
+
+/**
+ * @openapi
+ * /api/v1/users/assign-role:
+ *   patch:
+ *     tags: [Admin]
+ *     summary: Assign role to user (Admin only)
+ *     description: Assign ADMIN or USER role to a user. Only admins can use this endpoint.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *               - role
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 description: ID of the user to assign role to
+ *               role:
+ *                 type: string
+ *                 enum: [USER, ADMIN]
+ *                 description: Role to assign to the user
+ *     responses:
+ *       200:
+ *         description: Role assigned successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/ApiResponse'
+ *                 - type: object
+ *                   properties:
+ *                     data:
+ *                       $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Invalid input data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Authentication required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       403:
+ *         description: Admin access required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.patch(
+  '/assign-role',
+  authenticateToken,
+  requireAdmin,
+  validate(assignAdminSchema, 'body'),
+  userController.assignRole
 );
 
 export default router;

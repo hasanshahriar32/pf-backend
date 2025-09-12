@@ -1,6 +1,6 @@
 import { User } from '@prisma/client';
 import { prisma } from '@/config/database';
-import { CreateUserInput, UpdateUserInput, PaginationInput } from '@/validations/userValidation';
+import { CreateUserInput, UpdateUserInput, PaginationInput, AssignAdminInput } from '@/validations/userValidation';
 import { hashPassword, comparePassword } from '@/utils/password';
 
 export class UserService {
@@ -167,5 +167,26 @@ export class UserService {
     }
 
     return user;
+  }
+
+  async assignRole(assignData: AssignAdminInput): Promise<User> {
+    const { userId, role } = assignData;
+
+    // Check if user exists
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!existingUser) {
+      throw new Error('User not found');
+    }
+
+    // Update user role
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { role },
+    });
+
+    return updatedUser;
   }
 }

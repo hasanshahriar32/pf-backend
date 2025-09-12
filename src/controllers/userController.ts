@@ -14,6 +14,7 @@ import {
   LoginInput,
   ChangePasswordInput,
   PaginationInput,
+  AssignAdminInput,
 } from '@/validations/userValidation';
 
 export class UserController {
@@ -225,6 +226,22 @@ export class UserController {
       await this.userService.changePassword(req.user.id, currentPassword, newPassword);
 
       const response = createSuccessResponse('Password changed successfully');
+      res.status(200).json(response);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  assignRole = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const assignData: AssignAdminInput = req.body;
+      
+      const updatedUser = await this.userService.assignRole(assignData);
+
+      // Remove password from response
+      const { password, ...userWithoutPassword } = updatedUser;
+
+      const response = createSuccessResponse('User role updated successfully', userWithoutPassword);
       res.status(200).json(response);
     } catch (error) {
       next(error);
