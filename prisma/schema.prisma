@@ -29,3 +29,17 @@ enum UserRole {
   USER
   ADMIN
 }
+
+model Extension {
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  buildNumber          String
+  buildDescription     String
+  author               String
+  commitId             String
+  packedExtensionUrl   String
+  unpackedExtensionUrl String
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("extensions")
+}

@@ -9,8 +9,9 @@ A modular Express.js backend template built with TypeScript, Prisma ORM, MongoDB
 - ✅ **Prisma ORM** - Modern database toolkit
 - ✅ **MongoDB** - NoSQL database support
 - ✅ **Zod** - Schema validation
-- ✅ **JWT Authentication** - Secure token-based auth
+- ✅ **JWT Authentication** - Secure token-based auth with role system
 - ✅ **Bcrypt** - Password hashing
+- ✅ **Extension System** - 3rd party service integration
 - ✅ **Modular Architecture** - Clean separation of concerns
 - ✅ **Error Handling** - Centralized error handling
 - ✅ **CORS & Security** - Built-in security middleware
@@ -61,6 +62,7 @@ src/
    DATABASE_URL="mongodb://localhost:27017/express-backend"
    JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
    JWT_EXPIRES_IN=7d
+   EXTENSION_SECRET=your-super-secret-extension-key-change-this-in-production
    ```
 
 4. **Set up the database**
@@ -122,6 +124,13 @@ For detailed documentation information, see [API_DOCS.md](./API_DOCS.md).
 - `PUT /api/v1/users/:id` - Update user by ID
 - `DELETE /api/v1/users/:id` - Delete user by ID
 
+### Extension Management
+- `POST /api/v1/extensions` - Create extension (3rd party only, requires secret)
+- `GET /api/v1/extensions` - Get all extensions (public)
+- `GET /api/v1/extensions/latest` - Get latest extension (public)
+- `GET /api/v1/extensions/build/:buildNumber` - Get extension by build number (public)
+- `GET /api/v1/extensions/:id` - Get extension by ID (public)
+
 ### Health Check
 - `GET /health` - Server health check
 - `GET /api/v1/` - API information
@@ -178,6 +187,41 @@ GET /api/v1/users/profile
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
+### Create Extension (3rd Party Service)
+```bash
+POST /api/v1/extensions
+Content-Type: application/json
+
+{
+  "buildNumber": "v1.2.3",
+  "buildDescription": "Fixed login issues and improved performance",
+  "author": "John Doe",
+  "commitId": "a1b2c3d4e5f6789",
+  "packedExtensionUrl": "https://storage.example.com/extensions/v1.2.3/packed.zip",
+  "unpackedExtensionUrl": "https://storage.example.com/extensions/v1.2.3/unpacked.zip",
+  "secret": "your-extension-secret-key"
+}
+```
+
+Response:
+```json
+{
+  "success": true,
+  "message": "Extension created successfully",
+  "data": {
+    "id": "64f8a1b2c3d4e5f6g7h8i9j0",
+    "buildNumber": "v1.2.3",
+    "buildDescription": "Fixed login issues and improved performance",
+    "author": "John Doe",
+    "commitId": "a1b2c3d4e5f6789",
+    "packedExtensionUrl": "https://storage.example.com/extensions/v1.2.3/packed.zip",
+    "unpackedExtensionUrl": "https://storage.example.com/extensions/v1.2.3/unpacked.zip",
+    "createdAt": "2023-01-01T00:00:00.000Z",
+    "updatedAt": "2023-01-01T00:00:00.000Z"
+  }
+}
+```
+
 ## Database Schema
 
 ### User Model
@@ -189,9 +233,30 @@ model User {
   password  String
   firstName String?
   lastName  String?
+  role      UserRole @default(USER)
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+```
+
+### Extension Model
+```prisma
+model Extension {
+  id                   String   @id @default(auto()) @map("_id") @db.ObjectId
+  buildNumber          String   @unique
+  buildDescription     String
+  author               String
+  commitId             String
+  packedExtensionUrl   String
+  unpackedExtensionUrl String
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 }
 ```
 
@@ -213,6 +278,7 @@ model User {
 | `DATABASE_URL` | MongoDB connection string | Required |
 | `JWT_SECRET` | JWT signing secret | Required |
 | `JWT_EXPIRES_IN` | JWT expiration time | `7d` |
+| `EXTENSION_SECRET` | Secret for 3rd party extension services | Required |
 
 ## Security Features
 

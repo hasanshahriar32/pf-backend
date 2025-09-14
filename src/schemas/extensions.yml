@@ -1,0 +1,373 @@
+# Extension API Documentation
+# This file contains all extension-related schemas, paths, and components
+
+components:
+  schemas:
+    Extension:
+      type: object
+      required:
+        - id
+        - buildNumber
+        - buildDescription
+        - author
+        - commitId
+        - packedExtensionUrl
+        - unpackedExtensionUrl
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the extension
+          example: "64f8a1b2c3d4e5f6g7h8i9j0"
+        buildNumber:
+          type: string
+          description: Build number or version identifier
+          example: "v1.2.3"
+        buildDescription:
+          type: string
+          description: Description of the build or changes
+          example: "Fixed login issues and improved performance"
+        author:
+          type: string
+          description: Author or creator of the build
+          example: "John Doe"
+        commitId:
+          type: string
+          description: Git commit ID or hash
+          example: "a1b2c3d4e5f6789"
+        packedExtensionUrl:
+          type: string
+          format: uri
+          description: URL to download the packed extension
+          example: "https://storage.example.com/extensions/v1.2.3/packed.zip"
+        unpackedExtensionUrl:
+          type: string
+          format: uri
+          description: URL to download the unpacked extension
+          example: "https://storage.example.com/extensions/v1.2.3/unpacked.zip"
+        createdAt:
+          type: string
+          format: date-time
+          description: Extension creation timestamp
+          example: "2023-01-01T00:00:00.000Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: "2023-01-01T00:00:00.000Z"
+
+    ExtensionCreate:
+      type: object
+      required:
+        - buildNumber
+        - buildDescription
+        - author
+        - commitId
+        - packedExtensionUrl
+        - unpackedExtensionUrl
+      properties:
+        buildNumber:
+          type: string
+          description: Build number or version identifier
+          example: "v1.2.3"
+        buildDescription:
+          type: string
+          description: Description of the build or changes
+          example: "Fixed login issues and improved performance"
+        author:
+          type: string
+          description: Author or creator of the build
+          example: "John Doe"
+        commitId:
+          type: string
+          description: Git commit ID or hash
+          example: "a1b2c3d4e5f6789"
+        packedExtensionUrl:
+          type: string
+          format: uri
+          description: URL to download the packed extension
+          example: "https://storage.example.com/extensions/v1.2.3/packed.zip"
+        unpackedExtensionUrl:
+          type: string
+          format: uri
+          description: URL to download the unpacked extension
+          example: "https://storage.example.com/extensions/v1.2.3/unpacked.zip"
+
+paths:
+  /api/v1/extensions:
+    post:
+      tags:
+        - Extensions
+      summary: Create a new extension (3rd party service only)
+      description: Create a new extension build entry. Requires secret authentication from 3rd party service.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/ExtensionCreate'
+                - type: object
+                  required:
+                    - secret
+                  properties:
+                    secret:
+                      type: string
+                      description: Secret key for 3rd party authentication
+                      example: "your-secret-key-here"
+            example:
+              buildNumber: "v1.2.3"
+              buildDescription: "Fixed login issues and improved performance"
+              author: "John Doe"
+              commitId: "a1b2c3d4e5f6789"
+              packedExtensionUrl: "https://storage.example.com/extensions/v1.2.3/packed.zip"
+              unpackedExtensionUrl: "https://storage.example.com/extensions/v1.2.3/unpacked.zip"
+              secret: "your-secret-key-here"
+      responses:
+        '201':
+          description: Extension created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Extension'
+              example:
+                success: true
+                message: "Extension created successfully"
+                data:
+                  id: "64f8a1b2c3d4e5f6g7h8i9j0"
+                  buildNumber: "v1.2.3"
+                  buildDescription: "Fixed login issues and improved performance"
+                  author: "John Doe"
+                  commitId: "a1b2c3d4e5f6789"
+                  packedExtensionUrl: "https://storage.example.com/extensions/v1.2.3/packed.zip"
+                  unpackedExtensionUrl: "https://storage.example.com/extensions/v1.2.3/unpacked.zip"
+                  createdAt: "2023-01-01T00:00:00.000Z"
+                  updatedAt: "2023-01-01T00:00:00.000Z"
+        '400':
+          description: Invalid input data or missing secret
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                message: "Secret is required"
+                error: "Secret is required"
+        '401':
+          description: Invalid secret
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                message: "Invalid secret"
+                error: "Invalid secret"
+
+    get:
+      tags:
+        - Extensions
+      summary: Get all extensions (Public)
+      description: Retrieve a paginated list of all extensions. This endpoint is public and doesn't require authentication.
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+          description: Page number for pagination
+          example: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+          description: Number of items per page
+          example: 10
+      responses:
+        '200':
+          description: Extensions retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PaginatedResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Extension'
+              example:
+                success: true
+                message: "Extensions retrieved successfully"
+                data:
+                  - id: "64f8a1b2c3d4e5f6g7h8i9j0"
+                    buildNumber: "v1.2.3"
+                    buildDescription: "Fixed login issues"
+                    author: "John Doe"
+                    commitId: "a1b2c3d4e5f6789"
+                    packedExtensionUrl: "https://storage.example.com/extensions/v1.2.3/packed.zip"
+                    unpackedExtensionUrl: "https://storage.example.com/extensions/v1.2.3/unpacked.zip"
+                    createdAt: "2023-01-01T00:00:00.000Z"
+                    updatedAt: "2023-01-01T00:00:00.000Z"
+                pagination:
+                  page: 1
+                  limit: 10
+                  total: 1
+                  pages: 1
+
+  /api/v1/extensions/latest:
+    get:
+      tags:
+        - Extensions
+      summary: Get latest extension (Public)
+      description: Retrieve the most recent extension build. This endpoint is public.
+      responses:
+        '200':
+          description: Latest extension retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Extension'
+              example:
+                success: true
+                message: "Latest extension retrieved successfully"
+                data:
+                  id: "64f8a1b2c3d4e5f6g7h8i9j0"
+                  buildNumber: "v1.2.3"
+                  buildDescription: "Latest build with bug fixes"
+                  author: "John Doe"
+                  commitId: "a1b2c3d4e5f6789"
+                  packedExtensionUrl: "https://storage.example.com/extensions/v1.2.3/packed.zip"
+                  unpackedExtensionUrl: "https://storage.example.com/extensions/v1.2.3/unpacked.zip"
+                  createdAt: "2023-01-01T00:00:00.000Z"
+                  updatedAt: "2023-01-01T00:00:00.000Z"
+        '404':
+          description: No extensions found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                message: "No extensions found"
+                error: "No extensions found"
+
+  /api/v1/extensions/build/{buildNumber}:
+    get:
+      tags:
+        - Extensions
+      summary: Get extension by build number (Public)
+      description: Retrieve a specific extension by its build number. This endpoint is public.
+      parameters:
+        - in: path
+          name: buildNumber
+          required: true
+          schema:
+            type: string
+          description: Build number of the extension
+          example: "v1.2.3"
+      responses:
+        '200':
+          description: Extension retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Extension'
+              example:
+                success: true
+                message: "Extension retrieved successfully"
+                data:
+                  id: "64f8a1b2c3d4e5f6g7h8i9j0"
+                  buildNumber: "v1.2.3"
+                  buildDescription: "Specific build version"
+                  author: "John Doe"
+                  commitId: "a1b2c3d4e5f6789"
+                  packedExtensionUrl: "https://storage.example.com/extensions/v1.2.3/packed.zip"
+                  unpackedExtensionUrl: "https://storage.example.com/extensions/v1.2.3/unpacked.zip"
+                  createdAt: "2023-01-01T00:00:00.000Z"
+                  updatedAt: "2023-01-01T00:00:00.000Z"
+        '404':
+          description: Extension not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                message: "Extension not found"
+                error: "Extension not found"
+
+  /api/v1/extensions/{id}:
+    get:
+      tags:
+        - Extensions
+      summary: Get extension by ID (Public)
+      description: Retrieve a specific extension by its unique ID. This endpoint is public.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Unique extension ID
+          example: "64f8a1b2c3d4e5f6g7h8i9j0"
+      responses:
+        '200':
+          description: Extension retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Extension'
+              example:
+                success: true
+                message: "Extension retrieved successfully"
+                data:
+                  id: "64f8a1b2c3d4e5f6g7h8i9j0"
+                  buildNumber: "v1.2.3"
+                  buildDescription: "Extension retrieved by ID"
+                  author: "John Doe"
+                  commitId: "a1b2c3d4e5f6789"
+                  packedExtensionUrl: "https://storage.example.com/extensions/v1.2.3/packed.zip"
+                  unpackedExtensionUrl: "https://storage.example.com/extensions/v1.2.3/unpacked.zip"
+                  createdAt: "2023-01-01T00:00:00.000Z"
+                  updatedAt: "2023-01-01T00:00:00.000Z"
+        '404':
+          description: Extension not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                message: "Extension not found"
+                error: "Extension not found"
+
+tags:
+  - name: Extensions
+    description: Extension build management operations for 3rd party services and public access

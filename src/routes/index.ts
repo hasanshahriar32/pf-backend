@@ -1,10 +1,14 @@
 import { Router } from 'express';
 import userRoutes from '@/routes/userRoutes';
+import extensionRoutes from '@/routes/extensionRoutes';
 
 const router = Router();
 
 // Mount user routes
 router.use('/users', userRoutes);
+
+// Mount extension routes
+router.use('/extensions', extensionRoutes);
 
 /**
  * @openapi
@@ -36,6 +40,9 @@ router.use('/users', userRoutes);
  *                     users:
  *                       type: string
  *                       example: '/api/v1/users'
+ *                     extensions:
+ *                       type: string
+ *                       example: '/api/v1/extensions'
  *                     health:
  *                       type: string
  *                       example: '/health'
@@ -50,6 +57,7 @@ router.get('/', (req: any, res: any) => {
     version: '1.0.0',
     endpoints: {
       users: '/api/v1/users',
+      extensions: '/api/v1/extensions',
       health: '/health',
       documentation: '/api-docs',
     },
