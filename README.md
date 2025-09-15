@@ -18,7 +18,7 @@ A modular Express.js backend template built with TypeScript, Prisma ORM, MongoDB
 
 ## Project Structure
 
-```
+```bash
 src/
 ├── config/          # Database and app configuration
 ├── controllers/     # Request handlers
@@ -31,6 +31,10 @@ src/
 └── index.ts        # Application entry point
 ```
 
+## Entity-Relationship Diagram (ERD)
+
+[View the ERD here](./public/ERD.svg)
+
 ## Prerequisites
 
 - Node.js (v18 or higher)
@@ -40,22 +44,26 @@ src/
 ## Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd pf-backend
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Set up environment variables**
+
    ```bash
    cp .env.example .env
    ```
-   
+
    Update `.env` with your configuration:
+
    ```env
    NODE_ENV=development
    PORT=3000
@@ -66,6 +74,7 @@ src/
    ```
 
 4. **Set up the database**
+
    ```bash
    # Generate Prisma client
    npm run db:generate
@@ -75,6 +84,7 @@ src/
    ```
 
 5. **Build the project**
+
    ```bash
    npm run build
    ```
@@ -82,6 +92,7 @@ src/
 ## Development
 
 Start the development server:
+
 ```bash
 npm run dev
 ```
@@ -93,11 +104,13 @@ The server will start on `http://localhost:3000`
 This project includes comprehensive, interactive API documentation powered by **Scalar**.
 
 ### Access Documentation
+
 - **Interactive API Docs**: `http://localhost:3000/api-docs`
 - **OpenAPI Spec**: `http://localhost:3000/openapi.json`
 - **Health Check**: `http://localhost:3000/health`
 
-### Features
+### UI Features
+
 - 🎨 Beautiful, modern UI with purple theme
 - 🔐 Built-in JWT authentication testing
 - 📊 Interactive request/response examples
@@ -109,22 +122,26 @@ For detailed documentation information, see [API_DOCS.md](./API_DOCS.md).
 ## API Endpoints
 
 ### Authentication
+
 - `POST /api/v1/users/register` - Register a new user
 - `POST /api/v1/users/login` - Login user
 
 ### User Management (Protected)
+
 - `GET /api/v1/users/profile` - Get current user profile
 - `PUT /api/v1/users/profile` - Update current user profile
 - `DELETE /api/v1/users/profile` - Delete current user account
 - `PUT /api/v1/users/change-password` - Change password
 
 ### Admin Routes (Protected)
+
 - `GET /api/v1/users` - Get all users (paginated)
 - `GET /api/v1/users/:id` - Get user by ID
 - `PUT /api/v1/users/:id` - Update user by ID
 - `DELETE /api/v1/users/:id` - Delete user by ID
 
 ### Extension Management
+
 - `POST /api/v1/extensions` - Create extension (3rd party only, requires secret)
 - `GET /api/v1/extensions` - Get all extensions (public)
 - `GET /api/v1/extensions/latest` - Get latest extension (public)
@@ -132,12 +149,14 @@ For detailed documentation information, see [API_DOCS.md](./API_DOCS.md).
 - `GET /api/v1/extensions/:id` - Get extension by ID (public)
 
 ### Health Check
+
 - `GET /health` - Server health check
 - `GET /api/v1/` - API information
 
 ## Request/Response Examples
 
 ### Register User
+
 ```bash
 POST /api/v1/users/register
 Content-Type: application/json
@@ -152,6 +171,7 @@ Content-Type: application/json
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -170,6 +190,7 @@ Response:
 ```
 
 ### Login
+
 ```bash
 POST /api/v1/users/login
 Content-Type: application/json
@@ -181,13 +202,16 @@ Content-Type: application/json
 ```
 
 ### Authenticated Requests
+
 Include the JWT token in the Authorization header:
+
 ```bash
 GET /api/v1/users/profile
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 ### Create Extension (3rd Party Service)
+
 ```bash
 POST /api/v1/extensions
 Content-Type: application/json
@@ -204,6 +228,7 @@ Content-Type: application/json
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -225,6 +250,7 @@ Response:
 ## Database Schema
 
 ### User Model
+
 ```prisma
 model User {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -246,6 +272,7 @@ enum UserRole {
 ```
 
 ### Extension Model
+
 ```prisma
 model Extension {
   id                   String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -292,6 +319,7 @@ model Extension {
 ## Error Handling
 
 The application includes comprehensive error handling:
+
 - Validation errors (400)
 - Authentication errors (401)
 - Not found errors (404)
