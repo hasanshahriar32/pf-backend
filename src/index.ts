@@ -82,6 +82,7 @@ app.get('/', (req: any, res: any) => {
       api: `${req.protocol}://${req.get('host')}/api/v1`,
       documentation: `${req.protocol}://${req.get('host')}/api-docs`,
       openapi: `${req.protocol}://${req.get('host')}/openapi.json`,
+      erd: `${req.protocol}://${req.get('host')}/ERD.svg`
     },
   });
 });
