@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
+import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import { errorHandler } from '@/middleware/errorHandler';
 import { notFoundHandler } from '@/middleware/notFoundHandler';
@@ -24,7 +25,11 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Serve static files from public directory
-app.use(express.static('public'));
+// In development: src/../public, In production: dist/../public or dist/public
+const publicPath = process.env.NODE_ENV === 'production' 
+  ? path.join(__dirname, 'public') 
+  : path.join(__dirname, '../public');
+app.use(express.static(publicPath));
 
 // Swagger UI Documentation
 const swaggerOptions = {
@@ -88,6 +93,21 @@ app.get('/', (req: any, res: any) => {
       erd: `${req.protocol}://${req.get('host')}/ERD.svg`
     },
   });
+});
+
+// Explicit static file routes for better deployment compatibility
+app.get('/ERD.svg', (req: any, res: any) => {
+  const filePath = process.env.NODE_ENV === 'production' 
+    ? path.join(__dirname, 'public/ERD.svg')
+    : path.join(__dirname, '../public/ERD.svg');
+  res.sendFile(filePath);
+});
+
+app.get('/favicon.ico', (req: any, res: any) => {
+  const filePath = process.env.NODE_ENV === 'production' 
+    ? path.join(__dirname, 'public/favicon.ico')
+    : path.join(__dirname, '../public/favicon.ico');
+  res.sendFile(filePath);
 });
 
 // API routes

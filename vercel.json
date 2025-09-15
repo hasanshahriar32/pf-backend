@@ -8,6 +8,14 @@
   ],
   "routes": [
     {
+      "src": "/ERD.svg",
+      "dest": "/public/ERD.svg"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/public/favicon.ico"
+    },
+    {
       "src": "/(.*)",
       "dest": "/dist/index.js"
     }
