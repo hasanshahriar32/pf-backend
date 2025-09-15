@@ -11,7 +11,9 @@
     "postbuild": "prisma generate",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
-    "db:studio": "prisma studio --port 10000"
+    "db:studio": "prisma studio --port 10000",
+    "erd:generate": "prisma generate",
+    "docs:erd": "npm run erd:generate"
   },
   "keywords": [
     "express",
@@ -38,6 +40,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@mermaid-js/mermaid-cli": "^11.10.1",
     "@types/bcryptjs": "^2.4.4",
     "@types/cors": "^2.8.14",
     "@types/express": "^4.17.18",
@@ -47,6 +50,7 @@
     "@types/swagger-jsdoc": "^6.0.4",
     "copyfiles": "^2.4.1",
     "prisma": "^5.4.2",
+    "prisma-erd-generator": "^2.1.0",
     "tsc-alias": "^1.8.16",
     "tsx": "^3.13.0",
     "typescript": "^5.2.2"
